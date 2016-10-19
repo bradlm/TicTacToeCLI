@@ -1,5 +1,5 @@
 # TicTacToeCLI
-A Tic Tac Toe CLI app
+A 2-player Tic Tac Toe CLI app
 
 Run with `$ node index.js`.
 
