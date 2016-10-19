@@ -239,7 +239,7 @@ function done() {
   process.exit();
 }
 function checkInput(...args) {
-  return args.indexOf(input.toLowerCase()) > 0;
+  return args.indexOf(input.toLowerCase()) > -1;
 }
 
 respond(`Shall we play a game?`); 
@@ -338,7 +338,7 @@ stdin.on('data', function (userInput) {
               respond(`Inputs for ${key} must be ${defaults[key].options}.`)
             }
           } else {
-            respond(`${key} is not a valid option.`)
+            respond(`${key} is not a valid option.`, warn)
           }
         }
         break;
