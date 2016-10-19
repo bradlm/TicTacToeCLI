@@ -2,7 +2,6 @@
 const stdin = process.stdin;
 stdin.resume()
 stdin.setEncoding('utf8');
-const util = require('util');
 const chalk = require('chalk');
 const cX = chalk.bold.magenta;
 const cO = chalk.bold.blue;
