@@ -6,3 +6,5 @@ Setup with `npm install`.
 Run from command line with `npm start` or `node index.js`.
 
 Can save games and load games, change the size of the board, set win conditions, and define turn limits. 
+
+Next feature to be added will be persistent saves via fswrite.

@@ -3,6 +3,7 @@ const stdin = process.stdin;
 stdin.resume()
 stdin.setEncoding('utf8');
 const chalk = require('chalk');
+const fs = require('fs');
 const cX = chalk.bold.magenta;
 const cO = chalk.bold.blue;
 
@@ -241,7 +242,15 @@ function checkInput(...args) {
   return args.indexOf(input.toLowerCase()) > -1;
 }
 
-respond(`Shall we play a game?`); 
+fs.readFile('saves.json', 
+  (err, data) => {err ? 
+    respond(`No prior saves found.`, warn)
+    : (() => {
+      games = JSON.parse(data);
+      respond(`Saves found. (${games.length} records)`);
+      })();
+      respond(`Shall we play a game?`); 
+    });
 stdin.on('data', function (userInput) {
   input = userInput.replace('\n', '');
   if(checkInput(':quit', ':q')) {
@@ -250,6 +259,7 @@ stdin.on('data', function (userInput) {
     state = 'start';
     respond(`Reset.\nShall we play a game?`); 
   } else if(checkInput(':save',':s')) {
+
     if(currentGame !== null) { 
       currentGame.lastSaved = Date.now();
       if(currentGame.saveId !== null) {
@@ -258,7 +268,11 @@ stdin.on('data', function (userInput) {
         currentGame.saveId = games.length;
         games.push(currentGame);
       }
-      respond(`Game saved. SaveId: ${currentGame.saveId}`, confirm);
+      fs.writeFile('saves.json', 
+        JSON.stringify(games), err => err ? 
+          respond(`Error occured while attempting to save: ${err}`, error)
+          : respond(`Game saved. SaveId: ${currentGame.saveId + 1}`, confirm)
+      );
     } else {
       respond('No game is currently being played.', warn);
       state = "start";
@@ -282,7 +296,7 @@ stdin.on('data', function (userInput) {
       case 'load': 
         confirmInput(() => {
           respond('Saved Games:');
-          games.forEach((game, i) => console.log(`SaveId ${i}: ${game.lastSaved}`));
+          games.forEach((game, i) => console.log(`SaveId ${i + 1}: ${game.lastSaved}`));
           respond('Input the SaveId of the game you wish to load. Input \'back\' to go back.');
           state = 'loadSelect';
         }, () => {
@@ -297,7 +311,7 @@ stdin.on('data', function (userInput) {
           input = +input;
           if(Number.isInteger(input)) {
             if(input > 0 && input <= games.length) {
-              currentGame = --input;
+              currentGame = games[--input];
               state = 'playing';
               respond('Game loaded.', confirm);
             } else {
